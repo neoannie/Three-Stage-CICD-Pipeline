@@ -1,0 +1,10 @@
+Resources:
+  MyEC2Instance:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: t2.micro
+      ImageId: ami-0ca1f30768d0cf0e1
+      AvailabilityZone: us-west-1a 
+      Tags:
+        - Key: Name
+          Value: Annie Singsitc
