@@ -74,20 +74,20 @@ Create an SNS topic for notifications:
    ```
 4. Upload CloudFormation template to S3:
    ```bash
-   aws s3 mb s3://3stages-cicd-bucket
-   aws s3 cp Ec2_cfn_template.yml s3://3stages-cicd-bucket/
+   aws s3 mb s3://mysource-bucket-3stages-cicd
+   aws s3 cp Ec2_cfn_template.yml s3://mysource-bucket-3stages-cicd/
    ```
 5. Copy template to EC2 and validate:
    ```bash
-   aws s3 cp s3://3stages-cicd-bucket/Ec2_cfn_template.yml .
-   cfn-lint Ec2_cfn_template.yml
+   aws s3 cp s3://mysource-bucket-3stages-cicd/my-ec2-cfn-template.yml .
+   cfn-lint /my-ec2-cfn-template.yml
    ```
 6. Package and deploy:
    ```bash
    aws cloudformation package \
-     --template-file Ec2_cfn_template.yml \
+     --template-file  \my-ec2-cfn-template.yml \
      --s3-bucket 3stages-cicd-bucket \
-     --output-template-file build_template_Artifact.yml
+     --output-template-file build-template-Artifact.yml
    ```
    Then deploy using CloudFormation Console.
 
@@ -98,8 +98,8 @@ Create an SNS topic for notifications:
 1. Go to CodeCommit Console → Create repo: `3stage-cicd-source-repo`
 2. Clone repo locally:
    ```bash
-   git clone https://git-codecommit.us-east-1.amazonaws.com/v1/repos/3stage-cicd-source-repo
-   cd 3stage-cicd-source-repo
+   git clone https://git-codecommit.us-east-1.amazonaws.com/v1/repos/my-3stages-source-repo
+   cd my-3stages-source-repo 
    ```
 
 ---
@@ -107,8 +107,8 @@ Create an SNS topic for notifications:
 ### Step 3: Configure CodeBuild
 
 1. Go to CodeBuild Console → Create new project:
-   - Project Name: `3stage-cicd-Buildproject`
-   - Source: CodeCommit (`3stage-cicd-source-repo`)
+   - Project Name: `my-cicd-pipeline-3stages`
+   - Source: CodeCommit (`my-3stages-source-repo`)
    - Environment: Amazon Linux 2023, `aws/codebuild/amazonlinux2-x86_64-standard:3.0`
    - Buildspec file: `buildspec.yml`
 
@@ -141,16 +141,16 @@ artifacts:
 ### Step 5: Configure CodePipeline
 
 1. Go to CodePipeline Console → Create pipeline `3stage-cicd-pipeline`
-2. **Source Stage:** CodeCommit → `3stage-cicd-source-repo` (master branch)
-3. **Build Stage:** AWS CodeBuild → `3stage-cicd-Buildproject`
+2. **Source Stage:** CodeCommit → `my-3stages-source-repo` (master branch)
+3. **Build Stage:** AWS CodeBuild → `my-cicd-pipeline-3stages`
 4. **Deploy Stage:**
 
 #### Deploy to Test (us-east-1)
 
 - **Action**: `DeployToTest`
 - **Region**: `us-east-1`
-- **Stack Name**: `cfn-test-env-stack`
-- **Template**: `build_template_Artifact.yml`
+- **Stack Name**: `my-ec2-cfn-template`
+- **Template**: `build-template-Artifact.yml`
 - **Role**: `CloudFormationServiceRoleForMyTestPipeline`
 
 #### Manual Approval
@@ -162,14 +162,14 @@ artifacts:
 
 - **Action**: `DeployToProd`
 - **Region**: `us-west-1`
-- **Stack Name**: `cfn-prod-env-stack`
-- **Template**: `build_template_Artifact.yml`
+- **Stack Name**: `my-ec2-cfn-template`
+- **Template**: `build-template-Artifact.yml`
 - **Role**: `CloudFormationServiceRoleForMyTestPipeline`
 - **Parameter overrides**:
   ```json
   {
-    "KeyName": "cfn_kp-us-west-1",
-    "VPCStackName": "SampleNetworkCrossStack"
+    "KeyName": "cali-was-key",
+    "VPCStackName": "mywebapp-sct"
   }
   ```
 
@@ -177,7 +177,7 @@ artifacts:
 
 ## Usage
 
-- Commit code to the `3stage-cicd-source-repo`
+- Commit code to the `my-3stages-source-repo`
 - CodePipeline will automatically build and deploy to test and production (with manual approval)
 
 ---
