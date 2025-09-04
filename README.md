@@ -75,7 +75,7 @@ Create an SNS topic for notifications:
 4. Upload CloudFormation template to S3:
    ```bash
    aws s3 mb s3://mysource-bucket-3stages-cicd
-   aws s3 cp Ec2_cfn_template.yml s3://mysource-bucket-3stages-cicd/
+   aws s3 cp my-c2-cfn-template.yml s3://mysource-bucket-3stages-cicd/
    ```
 5. Copy template to EC2 and validate:
    ```bash
