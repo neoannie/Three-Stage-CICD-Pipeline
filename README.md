@@ -107,7 +107,7 @@ Create an SNS topic for notifications:
 ### Step 3: Configure CodeBuild
 
 1. Go to CodeBuild Console → Create new project:
-   - Project Name: `my-cicd-pipeline-3stages`
+   - Project Name: `my-cicd-pipeline-3stage`
    - Source: CodeCommit (`my-3stages-source-repo`)
    - Environment: Amazon Linux 2023, `aws/codebuild/amazonlinux2-x86_64-standard:3.0`
    - Buildspec file: `buildspec.yml`
